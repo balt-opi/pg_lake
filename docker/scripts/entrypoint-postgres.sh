@@ -8,6 +8,9 @@ trap "echo 'Caught termination signal. Exiting...'; exit 0" SIGINT SIGTERM
 PGBASEDIR=${PGBASEDIR:-/home/postgres}
 PG_MAJOR=${PG_MAJOR:-18}
 
+# Fix locale error
+#locale-gen en_US.UTF-8
+
 # Create and fix permissions for temporary directory BEFORE starting PostgreSQL
 # Docker volumes are created with root ownership, but postgres user needs write access
 mkdir -p ${PGBASEDIR}/pgsql-${PG_MAJOR}/data/base/pgsql_tmp

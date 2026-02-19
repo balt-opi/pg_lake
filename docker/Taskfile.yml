@@ -28,7 +28,7 @@ tasks:
               vars: { PG_MAJOR: "{{.PG_MAJOR}}" }
             - |
                 docker buildx build \
-                  --builder pg_lake_builder_pg{{.PG_MAJOR}} \
+                  #--builder pg_lake_builder_pg{{.PG_MAJOR}} \
                   --platform {{.PLATFORMS}} \
                   --target pg_lake_postgres \
                   --build-arg PG_MAJOR={{.PG_MAJOR}} \
@@ -36,10 +36,11 @@ tasks:
                   --build-arg BASE_IMAGE_TAG={{.BASE_IMAGE_TAG}} \
                   -t {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}}-{{.BASE_IMAGE_OS}} \
                   -t {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}} \
-                  {{if eq .PUSH "true"}}--push{{end}} \
                   -f Dockerfile \
                   --progress=plain \
                   .
+                {{if eq .PUSH "true"}} docker push {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}}-{{.BASE_IMAGE_OS}} {{end}}
+                {{if eq .PUSH "true"}} docker push {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}} {{end}}
         vars:
             PUSH: '{{.PUSH | default "false"}}'
 
@@ -51,7 +52,7 @@ tasks:
               vars: { PG_MAJOR: "{{.PG_MAJOR}}" }
             - |
                 docker buildx build \
-                  --builder pg_lake_builder_pg{{.PG_MAJOR}} \
+                  #--builder pg_lake_builder_pg{{.PG_MAJOR}} \
                   --platform {{.PLATFORMS}} \
                   --target pgduck_server \
                   --build-arg PG_MAJOR={{.PG_MAJOR}} \
@@ -59,10 +60,11 @@ tasks:
                   --build-arg BASE_IMAGE_TAG={{.BASE_IMAGE_TAG}} \
                   -t {{.REGISTRY}}/{{.IMAGE_OWNER}}/pgduck-server:{{.VERSION}}-pg{{.PG_MAJOR}}-{{.BASE_IMAGE_OS}} \
                   -t {{.REGISTRY}}/{{.IMAGE_OWNER}}/pgduck-server:{{.VERSION}}-pg{{.PG_MAJOR}} \
-                  {{if eq .PUSH "true"}}--push{{end}} \
                   -f Dockerfile \
                   --progress=plain \
                   .
+                {{if eq .PUSH "true"}}docker push {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}}-{{.BASE_IMAGE_OS}} {{end}}
+                {{if eq .PUSH "true"}}docker push {{.REGISTRY}}/{{.IMAGE_OWNER}}/pg_lake:{{.VERSION}}-pg{{.PG_MAJOR}} {{end}}
         vars:
             PUSH: '{{.PUSH | default "false"}}'
 
@@ -236,7 +238,7 @@ tasks:
               vars: { PG_MAJOR: "{{.PG_MAJOR}}" }
             - |
                 docker buildx build \
-                  --builder pg_lake_builder_pg{{.PG_MAJOR}} \
+                  #--builder pg_lake_builder_pg{{.PG_MAJOR}} \
                   --platform linux/{{ARCH}} \
                   --target pg_lake_postgres \
                   --build-arg PG_MAJOR={{.PG_MAJOR}} \
@@ -251,7 +253,7 @@ tasks:
                   .
             - |
                 docker buildx build \
-                  --builder pg_lake_builder_pg{{.PG_MAJOR}} \
+                  #--builder pg_lake_builder_pg{{.PG_MAJOR}} \
                   --platform linux/{{ARCH}} \
                   --target pgduck_server \
                   --build-arg PG_MAJOR={{.PG_MAJOR}} \

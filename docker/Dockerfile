@@ -18,11 +18,12 @@ ARG PGAUDIT17_VERSION=REL_17_STABLE
 ARG PGAUDIT18_VERSION=REL_18_STABLE
 
 # Install build dependencies
-RUN if [ "$BASE_IMAGE_OS" = "almalinux" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "almalinux" ]; then \
         dnf -y update && \
         dnf -y install epel-release && \
         dnf config-manager --enable crb && \
         dnf -y install \
+            glibc-all-langpacks \
             ca-certificates \
             cmake \
             ninja-build \
@@ -68,7 +69,7 @@ RUN if [ "$BASE_IMAGE_OS" = "almalinux" ]; then \
         alternatives --auto java && alternatives --auto javac && java -version && \
         dnf clean all; \
     fi
-RUN if [ "$BASE_IMAGE_OS" = "debian" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "debian" ]; then \
         apt-get update \
         && apt-get install -y \
             build-essential \
@@ -117,8 +118,8 @@ RUN if [ "$BASE_IMAGE_OS" = "debian" ]; then \
     fi
 
 # Install jdk21 for debian
-RUN if [ "$BASE_IMAGE_OS" = "debian" ]; then \
-        if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "debian" ]; then \
+        if [ "$(dpkg --print-architecture)" == "arm64" ]; then \
             ARCH=aarch64; \
         else \
             ARCH=x64; \
@@ -134,13 +135,13 @@ ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install pipenv and pre-commit
-RUN if [ "$BASE_IMAGE_OS" = "almalinux" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "almalinux" ]; then \
         python3.11 -m ensurepip --upgrade && \
         python3.11 -m pip install --upgrade pip && \
         python3.11 -m pip install pipenv && \
         python3.11 -m pip install pre-commit="=4.3.0"; \
     fi
-RUN if [ "$BASE_IMAGE_OS" = "debian" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "debian" ]; then \
         python3.11 -m pip install --upgrade pip --break-system-packages && \
         python3.11 -m pip install pipenv --break-system-packages && \
         python3.11 -m pip install pre-commit="=4.3.0" --break-system-packages; \
@@ -307,12 +308,13 @@ ARG BASE_IMAGE_OS
 ARG BASE_IMAGE_TAG
 
 # Install ONLY runtime libraries (no -devel packages, no build tools)
-RUN if [ "$BASE_IMAGE_OS" = "almalinux" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "almalinux" ]; then \
     dnf -y update && \
     dnf -y install epel-release && \
     dnf config-manager --enable crb && \
     dnf -y install --allowerasing \
     ca-certificates \
+    glibc-all-langpacks \
     readline \
     zlib \
     sudo \
@@ -336,7 +338,7 @@ RUN if [ "$BASE_IMAGE_OS" = "almalinux" ]; then \
     dnf clean all; \
     fi
 
-RUN if [ "$BASE_IMAGE_OS" = "debian" ]; then \
+RUN if [ "$BASE_IMAGE_OS" == "debian" ]; then \
     apt-get update \
     && apt-get install -y \
     libreadline8 \
