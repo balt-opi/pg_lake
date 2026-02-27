@@ -6,14 +6,15 @@ services:
     networks:
       - pg_net
     ports:
-      - "5432:5432"
+      - "54432:5432"
     security_opt:
       - label=disable
     volumes:
       - ./scripts/entrypoint-postgres.sh:/entrypoint-postgres.sh
       - ./scripts/init-postgres.sql:/init-postgres.sql
       - pgduck-unix-socket-volume:/home/postgres/pgduck_socket_dir
-      - /mnt/pgdata/pg_lake:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp
+      #- /mnt/pgdata/pg_lake:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp
+      - pg-shared-tmp-dir-volume:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp 
     entrypoint: ["/entrypoint-postgres.sh"]
     restart: unless-stopped
     healthcheck:
@@ -43,7 +44,8 @@ services:
       - ./scripts/entrypoint-pgduck-server.sh:/entrypoint-pgduck-server.sh
       - ./scripts/init-pgduck-server.sql:/init-pgduck-server.sql
       - pgduck-unix-socket-volume:/home/postgres/pgduck_socket_dir
-      - /mnt/pgdata/pg_lake:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp
+      #- /mnt/pgdata/pg_lake:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp
+      - pg-shared-tmp-dir-volume:/home/postgres/pgsql-${PG_MAJOR:-18}/data/base/pgsql_tmp 
     entrypoint: ["/entrypoint-pgduck-server.sh"]
     restart: unless-stopped
     healthcheck:
@@ -74,13 +76,13 @@ services:
     # entrypoint: ["/init-s3.sh"]
     volumes:
       - ./scripts/init-s3.sh:/init-s3.sh
-      - "${XDG_RUN_DIR:-/run}/docker.sock:/var/run/docker.sock"
+      - "${XDG_RUNTIME_DIR:-/run}/docker.sock:/var/run/docker.sock"
       - "${LOCALSTACK_VOLUME_DIR:-/mnt/pgdata/localstack}:/var/lib/localstack"
       - "${PWD}/scripts/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh" 
 
 volumes:
   pgduck-unix-socket-volume:
-  # pg-shared-tmp-dir-volume:  # Shared temp directory for both PostgreSQL and pgduck_server
+  pg-shared-tmp-dir-volume:  # Shared temp directory for both PostgreSQL and pgduck_server
 
 networks:
   pg_net:
