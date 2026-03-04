@@ -6,7 +6,7 @@ services:
     networks:
       - pg_net
     ports:
-      - "54432:5432"
+      - "5432:5432"
     security_opt:
       - label=disable
     volumes:
@@ -73,7 +73,7 @@ services:
     environment:
       # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
       - DEBUG=${DEBUG:-1}
-    # entrypoint: ["/init-s3.sh"]
+    entrypoint: ["/init-s3.sh"]
     volumes:
       - ./scripts/init-s3.sh:/init-s3.sh
       - "${XDG_RUNTIME_DIR:-/run}/docker.sock:/var/run/docker.sock"
